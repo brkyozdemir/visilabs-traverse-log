@@ -83,8 +83,7 @@ namespace Visilabs.TraverseLog
                 try
                 {
                     string[] lines = File.ReadAllLines(directory + "\\" + file.Name);
-                    Directory.CreateDirectory(modify + directory.Name + directory.Parent.Name);
-                    using (StreamWriter writer = new StreamWriter(modify + directory.Name + directory.Parent.Name + "\\" + file.Name))
+                    using (StreamWriter writer = new StreamWriter(modify + file.Name))
                     {
                         Console.WriteLine("Process has started...");
                         for (int i = 0; i < lines.Length; i++)
