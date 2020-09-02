@@ -37,37 +37,40 @@ namespace Visilabs.TraverseLog
 
                 foreach (var subdirectory in subdirectories)
                 {
+                    var files = subdirectory.EnumerateFiles();
+                    int counter = 0;
+                    foreach (var file in files)
+                    {
+                        if (file.Name.Contains(value))
+                        {
+                            counter += 1;
+                            var percentage = (counter * 100) / files.Count();
+                            HandleFile(file, subdirectory);
+                            Console.WriteLine("%" + percentage + " of total files have been processed.");
+                            Console.WriteLine("");
+                        }
+                    }
                     TraverseDirectory(subdirectory);
                 }
 
-                var files = directoryInfo.EnumerateFiles();
-                int counter = 0;
-                foreach (var file in files)
-                {
-                    if (file.Name.Contains(value))
-                    {
-                        counter += 1;
-                        var percentage = (counter * 100) / files.Count();
-                        HandleFile(file);
-                        Console.WriteLine("%" + percentage + " of total files have been processed.");
-                        Console.WriteLine("");
-                    }
-                }
+
             }
 
-            void HandleFile(FileInfo file)
+            void HandleFile(FileInfo file, DirectoryInfo directory)
             {
                 Console.WriteLine("{0}", file.Name);
+                Console.WriteLine(directory.Name);
                 try
                 {
-                    string[] lines = File.ReadAllLines(corrupted + file.Name);
-                    using (StreamWriter writer = new StreamWriter(modify + file.Name))
+                    string[] lines = File.ReadAllLines(directory + "\\" + file.Name);
+                    Directory.CreateDirectory(modify + directory.Name);
+                    using (StreamWriter writer = new StreamWriter(modify + directory.Name + "\\" + file.Name))
                     {
                         Console.WriteLine("Process has started...");
                         for (int i = 0; i < lines.Length; i++)
                         {
                             var percentage = (i * 100) / lines.Count();
-                            Console.Write("\r%{0} ", percentage+1 + " of file is done.");
+                            Console.Write("\r%{0} ", percentage + " of file is done.");
                             writer.WriteLine(lines[i]);
                         }
                         Console.WriteLine("Fully copied and pasted");
